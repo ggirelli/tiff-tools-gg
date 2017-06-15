@@ -13,4 +13,4 @@ Cheers!
 
 ### Conversion
 
-Conversion tools are available in the [conversion](conversion/) folder.
+Conversion tools are available in the [conversion](src/conversion/) sub folder.
