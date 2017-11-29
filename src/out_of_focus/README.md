@@ -49,15 +49,7 @@ NOTE: use zplot.R to generate a PDF of the distributions. Simply run:
 
 ## Requirements
 
-Python packages:
+Python packages: `argparse`, `os`, `re`, `skimage`.
 
-- `argparse`
-- `os`
-- `re`
-- `skimage`
-
-R libraries:
-
-- `argparser`
-- `ggplot2`
+R libraries: `argparser`, `ggplot2`.
 
