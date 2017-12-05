@@ -14,3 +14,11 @@ Cheers!
 ### Conversion
 
 Conversion tools are available in the [conversion](src/conversion/) sub folder.
+
+### `out_of_focus`
+
+Tools to identify out-of-focus fields of view from nuclear staining images are available in the [out_of_focus](src/out_of_focus/) sub folder.
+
+### Segmentation
+
+Segmentation tools are available in the [segmentation](src/segmentation/) sub folder.
