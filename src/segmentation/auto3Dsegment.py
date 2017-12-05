@@ -46,7 +46,8 @@ re-scaled if deconvolved with Huygens software, then a global (Otsu) and
 local (median) thresholds are combined to binarize the image in 3D. Then, holes
 are filled in 3D and a closing operation is performed to remove small objects.
 Objects are filtered based on volume and Z size, and those touching the XY
-contour of the image are discarded.
+contour of the image are discarded. The generated images have identified objects
+labeled with different intensity levels.
 ''')
 
 # Add mandatory arguments
