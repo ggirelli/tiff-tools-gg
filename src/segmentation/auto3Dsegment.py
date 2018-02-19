@@ -12,6 +12,7 @@
 # Requires: 
 # 
 # Changelog:
+#  v1.0.0 - 20180219: fixed border clearing.
 #  v0.0.1 - 20171205: first implementation.
 # 
 # ------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ parser.add_argument('--threads', type = int, nargs = 1,
     default = [1])
 
 # Version flag
-version = "0.0.1"
+version = "1.0.0"
 parser.add_argument('--version', action = 'version',
     version = '%s %s' % (sys.argv[0], version,))
 
@@ -251,7 +252,7 @@ def clear_borders(img, clean_z = None):
     # Remove objects touching the borders of the image.
     # 
     # Args:
-    #     img (np.array): image.
+    #     img (np.array): binary image.
     #     clean_z (bool): True to remove the objects touching the Z borders.
     # 
     # Returns:
@@ -265,6 +266,49 @@ def clear_borders(img, clean_z = None):
         if True == clean_z:
             for slide_id in range(img.shape[1]):
                 img[:, slide_id, :] = clear_border(img[:, slide_id, :])
+    return(img)
+
+def clear_borders2(img, clean_z = None):
+    # Remove objects touching the borders of the image.
+    # 
+    # Args:
+    #     img (np.array): labeled image.
+    #     clean_z (bool): True to remove the objects touching the Z borders.
+    # 
+    # Returns:
+    #     np.array: cleaned image.
+
+    if 2 == len(img.shape):
+        img = clear_border(img)
+    elif 3 == len(img.shape):
+        # Identify 3D objects touching X/Y borders
+        l = []
+        l.extend(np.unique(img[:, 0, :]).tolist())
+        l.extend(np.unique(img[:, -1, :]).tolist())
+        l.extend(np.unique(img[:, :, 0]).tolist())
+        l.extend(np.unique(img[:, :, -1]).tolist())
+        ii = set(l)
+
+        # Remove them
+        for i in ii:
+            img[img == i] = 0
+
+        # Apply also to Z borders
+        if True == clean_z:
+            # Identify
+            l = []
+            l.extend(np.unique(img[0, :, :]).tolist())
+            l.extend(np.unique(img[-1, :, :]).tolist())
+            ii = set(l)
+
+            # Remove
+            for i in ii:
+                img[img == i] = 0
+
+        # Re-label
+        img = label(img)
+
+    # Output
     return(img)
 
 def r_to_size(r_interval, do3d):
@@ -469,9 +513,6 @@ def run_segmentation(imgpath, imgdir):
     mask_local = threshold_adaptive(img, neighbour_side)
     mask = np.logical_and(mask_global, mask_local)
 
-    # Remove objects touch XY contour
-    mask = clear_borders(mask, False)
-
     # Fill holes (3D)
     mask = ndi.binary_fill_holes(mask)
     if 3 == len(mask.shape):
@@ -485,6 +526,9 @@ def run_segmentation(imgpath, imgdir):
 
     # Identify nuclei
     L = label(mask)
+
+    # Remove objects touch XY contour
+    mask = clear_borders2(L, False)
 
     # Output -------------------------------------------------------------------
     outpath = "%s%s" % (outdir, outprefix + imgpath)
