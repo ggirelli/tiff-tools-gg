@@ -5,13 +5,14 @@
 # 
 # Author: Gabriele Girelli
 # Email: gigi.ga90@gmail.com
-# Version: 0.0.1
+# Version: 1.1.0
 # Date: 20171205
 # Project: bioimaging
 # Description: automatic 3D segmentation of nuclear staining.
 # Requires: 
 # 
 # Changelog:
+#  v1.1.0 - 20180301: allowed for masks with different bit depth.
 #  v1.0.0 - 20180219: fixed border clearing.
 #  v0.0.1 - 20171205: first implementation.
 # 
@@ -80,7 +81,7 @@ parser.add_argument('--threads', type = int, nargs = 1,
     default = [1])
 
 # Version flag
-version = "1.0.0"
+version = "1.1.0"
 parser.add_argument('--version', action = 'version',
     version = '%s %s' % (sys.argv[0], version,))
 
@@ -480,6 +481,16 @@ def filter_obj_Z_size(mask, min_z_size):
     # Output
     return(mask)
 
+def get_dtype(i):
+    '''
+    Identify bit depth for a matrix of maximum intensity i.
+    '''
+    depths = [1, 2, 4, 8, 16]
+    for depth in depths:
+        if i <= 2**depth-1:
+            return("u%d" % (depth,))
+    return("u")
+
 def run_segmentation(imgpath, imgdir):
     # Perform 3D segmentation of nuclear staining image.
     # 
@@ -534,7 +545,7 @@ def run_segmentation(imgpath, imgdir):
     outpath = "%s%s" % (outdir, outprefix + imgpath)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        io.imsave(outpath, L.astype('u4'))
+        io.imsave(outpath, L.astype(get_dtype(L.max())))
     print("Segmentation output written to %s" % (outpath,))
 
     return(outpath)
