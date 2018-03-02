@@ -1,7 +1,7 @@
 tiff-tools-gg : segmentation
 ===
 
-Segmentation contains standalone tools to perform segmentation of tiff images. The `auto3Dsegment.py` allows to automatically segment nuclear staining images, preferably after deconvolving them.
+Segmentation contains standalone tools to perform segmentation of tiff images. The `auto3Dsegment.py` tool allows to automatically segment nuclear staining images, preferably after deconvolving them.
 
 ### Installation
 
