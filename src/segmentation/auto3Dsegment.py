@@ -36,6 +36,7 @@ from skimage.measure import label
 from skimage.morphology import closing, cube, square
 from skimage.segmentation import clear_border
 import sys
+import tifffile
 import warnings
 
 # PARAMETERS ===================================================================
@@ -66,7 +67,8 @@ parser.add_argument('--inreg', type = str, nargs = 1,
     Default: '%s'""" % (default_inreg,), default = [default_inreg])
 parser.add_argument('--outprefix', type = str, nargs = 1,
     help = """prefix to add to the name of output binarized images.
-    Default: 'mask_'""", default = ['mask_'])
+    Default: 'mask_', 'cmask_' if --compressed is used.""",
+    default = ['mask_'])
 parser.add_argument('--neighbour', type = int, nargs = 1,
     help = """Side of neighbourhood square/cube. Default: 101""",
     default = [101])
@@ -79,6 +81,16 @@ parser.add_argument('--minZ', type = float, nargs = 1,
 parser.add_argument('--threads', type = int, nargs = 1,
     help = """number of threads for parallelization. Default: 1""",
     default = [1])
+
+# Flags
+parser.add_argument('--labeled',
+    action = 'store_const', dest = 'labeled',
+    const = True, default = False,
+    help = 'Export labeled mask instead of binary one.')
+parser.add_argument('--compressed',
+    action = 'store_const', dest = 'compressed',
+    const = True, default = False,
+    help = 'Generate compressed TIF binary masks (not compatible with ImageJ.')
 
 # Version flag
 version = "1.1.0"
@@ -97,6 +109,10 @@ neighbour_side = args.neighbour[0]
 min_z_size = args.minZ[0]
 radius_interval = [args.radius[0], args.radius[1]]
 ncores = args.threads[0]
+labeled = args.labeled
+compressed = args.compressed
+if compressed and "mask_" == outprefix:
+    outprefix = 'cmask_'
 
 # Additional checks
 maxncores = multiprocessing.cpu_count()
@@ -491,6 +507,20 @@ def get_dtype(i):
             return("u%d" % (depth,))
     return("u")
 
+def save_tif(path, img, dtype, compressed):
+    new_shape = [1]
+    [new_shape.append(n) for n in img.shape]
+    img.shape = new_shape
+
+    if compressed:
+        tifffile.imsave(path, img.astype(dtype),
+            shape = img.shape, compress = 9,
+            dtype = dtype, imagej = True, metadata = {'axes' : 'CZYX'})
+    else:
+        tifffile.imsave(path, img.astype(dtype),
+            shape = img.shape, compress = 0,
+            dtype = dtype, imagej = True, metadata = {'axes' : 'CZYX'})
+
 def run_segmentation(imgpath, imgdir):
     # Perform 3D segmentation of nuclear staining image.
     # 
@@ -504,7 +534,7 @@ def run_segmentation(imgpath, imgdir):
     # Preparation --------------------------------------------------------------
 
     # Read image
-    img = io.imread(os.path.join(imgdir, imgpath))
+    img = tifffile.imread(os.path.join(imgdir, imgpath))
 
     # Re-slice
     img = autoselect_time_frame(img)
@@ -545,7 +575,11 @@ def run_segmentation(imgpath, imgdir):
     outpath = "%s%s" % (outdir, outprefix + imgpath)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        io.imsave(outpath, L.astype(get_dtype(L.max())))
+        if labeled:
+            save_tif(outpath, L, 'uint8', compressed)
+        else:
+            L[np.nonzero(L)] = 255
+            save_tif(outpath, L, 'uint8', compressed)
     print("Segmentation output written to %s" % (outpath,))
 
     return(outpath)
