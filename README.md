@@ -1,7 +1,7 @@
 tiff-tools-gg
 ===
 
-# !!!NOTE!!! This repo is being merged with [pygpseq](http://github.com/ggirelli/gpseq-img/py). Check the [pre-merge](https://github.com/ggirelli/tiff-tools-gg/tree/pre-merge) branch for the pre-merge code.
+# !!!NOTE!!! This repo is being merged with [pygpseq](http://github.com/ggirelli/gpseq-img-py). Check the [pre-merge](https://github.com/ggirelli/tiff-tools-gg/tree/pre-merge) branch for the pre-merge code.
 
 A few scripts to manage tiff images, more details on the format are available [here](http://www.fileformat.info/format/tiff/egff.htm).
 
