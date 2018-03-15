@@ -1,7 +1,7 @@
+**Note! As of 2018-03-15 `tiff-tools-gg` was merged with [`gpseq-img-py`](http://github.com/ggirelli/gpseq-img-py) and is not maintained anymore.**
+
 tiff-tools-gg (not maintained)
 ===
-
-**Note! As of 2018-03-15 `tiff-tools-gg` was merged with [`gpseq-img-py`](http://github.com/ggirelli/gpseq-img-py) and is not maintained anymore.**
 
 A few scripts to manage tiff images, more details on the format are available [here](http://www.fileformat.info/format/tiff/egff.htm).
 
