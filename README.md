@@ -1,4 +1,4 @@
-**!!!NOTE!!! This repo is being merged with [pygpseq](http://github.com/ggirelli/gpseq-img-py). Check the [pre-merge](https://github.com/ggirelli/dotter2gpseq/tree/pre-merge) branch for the pre-merge code.**
+**!!!NOTE!!! This repo is being merged with [pygpseq](http://github.com/ggirelli/gpseq-img-py). Check the [pre-merge](https://github.com/ggirelli/tiff-tools-gg/tree/pre-merge) branch for the pre-merge code.**
 
 ## How to switch to the pre-merge version (branch not maintained anymore)
 
